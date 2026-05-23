@@ -1,250 +1,135 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect } from "react";
 
-const sections = [
-  { id: "mission", label: "Mission" },
-  { id: "edge", label: "Edge" },
-  { id: "mindset", label: "Mindset" },
-  { id: "money", label: "Risk" },
-  { id: "market", label: "Market" },
-  { id: "methodology", label: "System" },
-];
-
-function MarketPulseChart() {
-  const path =
-    "M0,60 C40,20 80,100 120,60 C160,20 200,100 240,60";
-
-  return (
-    <div className="w-full max-w-md mx-auto mt-10">
-      <svg viewBox="0 0 240 120" className="w-full h-40">
-        <motion.path
-          d={path}
-          fill="transparent"
-          stroke="#facc15"
-          strokeWidth="2"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 2, ease: "easeInOut" }}
-        />
-        <motion.circle
-          cx="240"
-          cy="60"
-          r="4"
-          fill="#facc15"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 2, duration: 0.3 }}
-        />
-      </svg>
-    </div>
-  );
-}
-
-function Ticker() {
-  const items = [
-    "NIFTY 50 ▲ 24,850",
-    "BANKNIFTY ▲ 52,120",
-    "SENSEX ▲ 81,400",
-    "OPTIONS FLOW ACTIVE",
-    "VOLATILITY HIGH",
-  ];
-
-  return (
-    <div className="w-full overflow-hidden border-b border-yellow-500/20 bg-black/60 backdrop-blur">
-      <motion.div
-        className="flex gap-10 whitespace-nowrap py-2 text-xs text-yellow-300"
-        animate={{ x: [0, -500] }}
-        transition={{ repeat: Infinity, duration: 12, ease: "linear" }}
-      >
-        {items.concat(items).map((i, idx) => (
-          <span key={idx}>{i}</span>
-        ))}
-      </motion.div>
-    </div>
-  );
-}
-
-function CursorGlow() {
-  useEffect(() => {
-    const move = (e: MouseEvent) => {
-      const el = document.getElementById("cursor-glow");
-      if (el) {
-        el.style.left = e.clientX + "px";
-        el.style.top = e.clientY + "px";
-      }
-    };
-    window.addEventListener("mousemove", move);
-    return () => window.removeEventListener("mousemove", move);
-  }, []);
-
-  return (
-    <div
-      id="cursor-glow"
-      className="pointer-events-none fixed w-72 h-72 rounded-full opacity-20 blur-3xl bg-yellow-500 -translate-x-1/2 -translate-y-1/2"
-    />
-  );
-}
-
-export default function Page() {
-  const [active, setActive] = useState("mission");
+export default function Home() {
 
   useEffect(() => {
-    const handleScroll = () => {
-      const offsets = sections.map((s) => {
-        const el = document.getElementById(s.id);
-        if (!el) return { id: s.id, top: 0 };
-        return { id: s.id, top: el.getBoundingClientRect().top };
+    const links = document.querySelectorAll("a[href^='#']");
+    links.forEach(link => {
+      link.addEventListener("click", (e: any) => {
+        e.preventDefault();
+        const targetId = link.getAttribute("href").replace("#", "");
+        const target = document.getElementById(targetId);
+        if (target) {
+          target.scrollIntoView({ behavior: "smooth" });
+        }
       });
-
-      const visible = offsets
-        .filter((o) => o.top < 200)
-        .sort((a, b) => b.top - a.top)[0];
-
-      if (visible) setActive(visible.id);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    });
   }, []);
 
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
-
   return (
-    <div className="relative bg-black text-white min-h-screen overflow-hidden">
-      <CursorGlow />
-
-      {/* GRID BACKGROUND */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="grid-bg" />
-      </div>
-
-      <style jsx>{`
-        .grid-bg {
-          width: 100%;
-          height: 100%;
-          background-image: linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-          background-size: 60px 60px;
-          animation: moveGrid 18s linear infinite;
-        }
-
-        @keyframes moveGrid {
-          0% { transform: translate(0,0); }
-          100% { transform: translate(60px,60px); }
-        }
-      `}</style>
-
-      {/* TICKER */}
-      <Ticker />
-
-      {/* NAV */}
-      <div className="sticky top-0 z-50 bg-black/70 backdrop-blur border-b border-yellow-500/20">
-        <div className="flex overflow-x-auto gap-4 px-4 py-3 text-sm whitespace-nowrap">
-          {sections.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => scrollTo(s.id)}
-              className={`px-3 py-1 rounded-full border transition ${
-                active === s.id
-                  ? "bg-yellow-500 text-black"
-                  : "border-yellow-500/30 text-white"
-              }`}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
-      </div>
+    <main className="bg-black text-white min-h-screen">
 
       {/* HERO */}
-      <section className="text-center py-28 px-6 relative">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-5xl md:text-7xl font-bold text-yellow-400"
-        >
-          DST Wealth Builder
-        </motion.h1>
+      <section className="flex flex-col items-center justify-center text-center pt-28 pb-16">
 
-        <p className="mt-4 text-gray-300 max-w-2xl mx-auto text-lg">
-          Institutional-Grade Trading Mindset. Built for Consistency.
-        </p>
-
-        <div className="mt-6 flex justify-center gap-6 text-sm text-gray-400">
-          <span>10+ Years Experience</span>
-          <span>•</span>
-          <span>Risk First</span>
-          <span>•</span>
-          <span>System Trading</span>
+        <div className="border border-yellow-500 px-10 py-6 rounded-2xl">
+          <h1 className="text-6xl font-bold tracking-widest">DST</h1>
         </div>
 
-        <MarketPulseChart />
+        <p className="mt-6 text-lg text-gray-300 max-w-xl">
+          Learn to build wealth through discipline, strategy and honesty.
+        </p>
+
       </section>
+
+      {/* NAVIGATION */}
+      <nav className="flex flex-wrap justify-center gap-6 text-sm text-gray-300 border-y border-gray-800 py-4 sticky top-0 bg-black z-50">
+
+        <a href="#mission" className="hover:text-yellow-400">Mission</a>
+        <a href="#mindset" className="hover:text-yellow-400">Mindset</a>
+        <a href="#money" className="hover:text-yellow-400">Money Management</a>
+        <a href="#market" className="hover:text-yellow-400">Market Understanding</a>
+        <a href="#method" className="hover:text-yellow-400">Methodology</a>
+        <a href="#momentum" className="hover:text-yellow-400">Momentum</a>
+
+      </nav>
 
       {/* SECTIONS */}
-      <section id="edge" className="py-24 px-6 max-w-4xl mx-auto">
-        <h2 className="text-3xl text-yellow-400 mb-4">Edge</h2>
+
+      <section id="mission" className="px-6 py-20 max-w-4xl mx-auto">
+        <h2 className="text-2xl font-semibold text-yellow-400 mb-4">Mission</h2>
         <p className="text-gray-300">
-          We don’t predict markets. We execute systems with risk control and discipline.
+          Build disciplined traders who focus on process, not hype. Trading is a skill, not luck.
         </p>
       </section>
 
-      <section id="mission" className="py-24 px-6 max-w-4xl mx-auto">
-        <h2 className="text-3xl text-yellow-400 mb-4">Mission</h2>
+      <section id="mindset" className="px-6 py-20 max-w-4xl mx-auto border-t border-gray-800">
+        <h2 className="text-2xl font-semibold text-yellow-400 mb-4">Mindset</h2>
         <p className="text-gray-300">
-          Build disciplined traders who survive first, then scale consistently.
+          Emotional discipline, patience, and consistency define long-term success in markets.
         </p>
       </section>
 
-      <section id="mindset" className="py-24 px-6 max-w-4xl mx-auto">
-        <h2 className="text-3xl text-yellow-400 mb-4">Mindset</h2>
+      <section id="money" className="px-6 py-20 max-w-4xl mx-auto border-t border-gray-800">
+        <h2 className="text-2xl font-semibold text-yellow-400 mb-4">Money Management</h2>
         <p className="text-gray-300">
-          Emotional control and patience define long-term success.
+          Capital protection and position sizing are more important than entries.
         </p>
       </section>
 
-      <section id="money" className="py-24 px-6 max-w-4xl mx-auto">
-        <h2 className="text-3xl text-yellow-400 mb-4">Risk Management</h2>
+      <section id="market" className="px-6 py-20 max-w-4xl mx-auto border-t border-gray-800">
+        <h2 className="text-2xl font-semibold text-yellow-400 mb-4">Market Understanding</h2>
         <p className="text-gray-300">
-          Capital protection first. Returns come after risk control.
+          Understand price action, structure, and institutional behavior.
         </p>
       </section>
 
-      <section id="market" className="py-24 px-6 max-w-4xl mx-auto">
-        <h2 className="text-3xl text-yellow-400 mb-4">Market</h2>
+      <section id="method" className="px-6 py-20 max-w-4xl mx-auto border-t border-gray-800">
+        <h2 className="text-2xl font-semibold text-yellow-400 mb-4">Methodology</h2>
         <p className="text-gray-300">
-          Price action and liquidity drive all decisions.
+          Build rule-based systems for entry, exit, and risk control.
         </p>
       </section>
 
-      <section id="methodology" className="py-24 px-6 max-w-4xl mx-auto">
-        <h2 className="text-3xl text-yellow-400 mb-4">System</h2>
+      <section id="momentum" className="px-6 py-20 max-w-4xl mx-auto border-t border-gray-800">
+        <h2 className="text-2xl font-semibold text-yellow-400 mb-4">Momentum & Consistency</h2>
         <p className="text-gray-300">
-          Rule-based execution with strict entry, exit, and journaling.
+          Consistency and journaling turn knowledge into results.
         </p>
       </section>
 
-      {/* CTA */}
-      <section className="py-28 text-center">
-        <h2 className="text-3xl text-yellow-400 font-bold">
-          Join DST Wealth Builder
+      {/* WHATSAPP CTA */}
+      <section className="py-16 text-center border-t border-gray-800 mt-10">
+
+        <h2 className="text-2xl font-semibold text-white mb-6">
+          Community Access
         </h2>
 
-        <p className="text-gray-400 mt-2">
-          Build consistency. Eliminate randomness.
-        </p>
-
         <a
-          href="https://t.me/dstwealthbuilder"
-          className="mt-6 inline-block bg-yellow-500 text-black px-8 py-3 rounded-full font-semibold"
+          href="https://wa.me/917011895375"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-3 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl text-lg font-medium transition-all"
         >
-          Enter Community
+
+          {/* phone icon */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={2}
+            stroke="currentColor"
+            className="w-5 h-5"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M2.25 6.75c0 8.284 6.716 15 15 15
+              1.657 0 3-1.343 3-3v-1.086a1.5 1.5 0 0 0-1.06-1.436l-3.39-.97a1.5
+              1.5 0 0 0-1.518.45l-.88.88a12.035 12.035 0 0
+              1-5.657-5.657l.88-.88a1.5 1.5 0 0 0 .45-1.518l-.97-3.39A1.5
+              1.5 0 0 0 8.336 3.75H7.25c-1.657 0-3 1.343-3 3Z"
+            />
+          </svg>
+
+          <span>Join WhatsApp — 7011895375</span>
+
         </a>
+
       </section>
-    </div>
+
+    </main>
   );
 }
